@@ -344,7 +344,21 @@ fn show_critical_error(message: &str) {
     }
 }
 
+fn hide_console_window() {
+    use std::ptr;
+    use winapi::um::wincon::GetConsoleWindow;
+    use winapi::um::winuser::{ShowWindow, SW_HIDE};
+
+    let window = unsafe {GetConsoleWindow()};
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
+    if window != ptr::null_mut() {
+        unsafe {
+            ShowWindow(window, SW_HIDE);
+        }
+    }
+}
 fn main() {
+    hide_console_window();
     let args = match AppArgs::try_parse() {
         Ok(args) => args,
         Err(error) => {
@@ -571,7 +585,7 @@ fn main_overlay() -> anyhow::Result<()> {
 
                 let font_size = 18.0;
                 let valthrun_font = imgui.fonts().add_font(&[FontSource::TtfData {
-                    data: include_bytes!("../resources/Valthrun-Regular.ttf"),
+                    data: include_bytes!("../resources/arial.ttf"),
                     size_pixels: font_size,
                     config: Some(FontConfig {
                         rasterizer_multiply: 1.5,
